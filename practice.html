@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SQL Mastery — Practice</title><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/style.css"></head>
+<body>
+<header class="top-nav"><div class="nav-inner"><div class="brand">SQL Mastery</div><nav class="nav-links"><a href="Learn Sql.html" data-page="home">Home</a><a href="beginner.html" data-page="beginner">Beginner</a><a href="core.html" data-page="core">Core SQL</a><a href="advanced.html" data-page="advanced">Advanced</a><a href="industry.html" data-page="industry">Industry</a><a href="practice.html" data-page="practice">Practice</a></nav></div></header>
+<main class="page">
+<section class="hero"><div class="badges"><span class="badge b5">Phase 5</span><span class="badge b2">Practice Mode</span></div><h1>Practice: <em>apply everything you learned</em></h1><p>Each challenge has a solution query and exact explanation so learners can compare approach, not only syntax.</p></section>
+<section class="runner"><div class="runner-top"><div class="runner-title">⚡ SQL Playground <span class="runner-pill" id="runner-status">DB Loading…</span></div><div class="runner-actions"><button onclick="fillStarter()">Starter</button><button onclick="toggleSchema()">Schema</button><button onclick="clearEditor()">Clear</button><button class="run-btn" onclick="runSQL()">Run (Ctrl+Enter)</button></div></div><textarea id="editor" placeholder="Solve challenge here..."></textarea><div class="helper"><span id="db-txt">Loading database…</span></div><div id="schema-panel"><div class="schema-grid" id="schema-grid"></div></div><div class="result-area" id="result"><div class="res-msg">Run a query to see results here.</div></div></section>
+
+<section class="section"><div class="section-head"><div class="section-tag">Challenges</div><div class="section-title">Easy → Medium → Hard + Quick Reference</div><div class="section-desc">Lessons 19–22 in practical exam style.</div></div>
+
+<article class="lesson"><div class="lhd"><div class="lbadge lb5">19</div><div><div class="ltitle">Easy Challenge</div><div class="lsub">Electronics list sorted by price</div></div></div>
+<div class="cw"><div class="ch"><span class="cl">Solution</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT product_name, unit_price, stock_qty
+FROM products
+WHERE category = 'Electronics'
+ORDER BY unit_price DESC;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>Filter category first using WHERE.</li><li>Sort descending to show most expensive first.</li><li>Returns exactly requested output columns.</li></ol></div></div>
+</article>
+
+<article class="lesson"><div class="lhd"><div class="lbadge lb5">20</div><div><div class="ltitle">Medium Challenge</div><div class="lsub">Orders per customer (more than one)</div></div></div>
+<div class="cw"><div class="ch"><span class="cl">Solution</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT c.full_name, COUNT(o.order_id) AS order_count
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.full_name
+HAVING COUNT(o.order_id) > 1
+ORDER BY order_count DESC;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>JOIN links customer names to order rows.</li><li>GROUP BY creates one row per customer.</li><li>HAVING keeps only grouped customers with order count > 1.</li></ol></div></div>
+</article>
+
+<article class="lesson"><div class="lhd"><div class="lbadge lb5">21</div><div><div class="ltitle">Hard Challenge</div><div class="lsub">Department budget status using CASE</div></div></div>
+<div class="cw"><div class="ch"><span class="cl">Solution</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>WITH payroll AS (
+  SELECT department_id, COUNT(*) AS headcount, SUM(salary) AS total_payroll
+  FROM employees
+  GROUP BY department_id
+)
+SELECT d.dept_name, p.headcount, p.total_payroll, d.budget,
+       d.budget - p.total_payroll AS remaining,
+       CASE
+         WHEN p.total_payroll > d.budget * 1.05 THEN 'OVER BUDGET'
+         WHEN p.total_payroll < d.budget * 0.95 THEN 'UNDER BUDGET'
+         ELSE 'ON TARGET'
+       END AS budget_status
+FROM departments d
+JOIN payroll p ON d.department_id = p.department_id
+ORDER BY remaining;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>CTE calculates payroll once per department.</li><li>Main query compares payroll with budget.</li><li>CASE applies ±5% rule for status labels.</li></ol></div></div>
+</article>
+
+<article class="lesson"><div class="lhd"><div class="lbadge lb5">22</div><div><div class="ltitle">Quick Reference</div><div class="lsub">Fast memory map before interviews/tests</div></div></div>
+<p><strong>SELECT</strong> read rows · <strong>WHERE</strong> filter rows · <strong>GROUP BY</strong> aggregate groups · <strong>HAVING</strong> filter groups · <strong>JOIN</strong> merge tables · <strong>CASE</strong> conditional logic · <strong>WITH</strong> named query step · <strong>LAG/RANK</strong> window analytics.</p>
+<div class="call ci">ℹ️ Best learning loop: read explanation → run query → modify one line → run again.</div>
+</article>
+</section>
+<div class="footer-nav"><a href="industry.html">← Previous: Industry</a><a href="Learn Sql.html">Back to Home</a></div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script><script src="assets/app.js"></script><script>SqlMastery.bootPage('practice');</script>
+</body></html>

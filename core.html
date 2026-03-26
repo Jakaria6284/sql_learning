@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SQL Mastery — Core SQL</title><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/style.css"></head>
+<body>
+<header class="top-nav"><div class="nav-inner"><div class="brand">SQL Mastery</div><nav class="nav-links"><a href="Learn Sql.html" data-page="home">Home</a><a href="beginner.html" data-page="beginner">Beginner</a><a href="core.html" data-page="core">Core SQL</a><a href="advanced.html" data-page="advanced">Advanced</a><a href="industry.html" data-page="industry">Industry</a><a href="practice.html" data-page="practice">Practice</a></nav></div></header>
+<main class="page">
+<section class="hero"><div class="badges"><span class="badge b2">Phase 2</span><span class="badge b3">Production Core</span></div><h1>Core SQL: <em>combine and summarize data</em></h1><p>This phase covers the most used SQL in real jobs: JOINs, aggregation, group filtering, CASE logic, and subqueries.</p></section>
+<section class="runner"><div class="runner-top"><div class="runner-title">⚡ SQL Playground <span class="runner-pill" id="runner-status">DB Loading…</span></div><div class="runner-actions"><button onclick="fillStarter()">Starter</button><button onclick="toggleSchema()">Schema</button><button onclick="clearEditor()">Clear</button><button class="run-btn" onclick="runSQL()">Run (Ctrl+Enter)</button></div></div><textarea id="editor" placeholder="Run core SQL query..."></textarea><div class="helper"><span id="db-txt">Loading database…</span></div><div id="schema-panel"><div class="schema-grid" id="schema-grid"></div></div><div class="result-area" id="result"><div class="res-msg">Run a query to see results here.</div></div></section>
+
+<section class="section"><div class="section-head"><div class="section-tag">Phase 2 Lessons</div><div class="section-title">JOINs, Aggregates & Logic</div><div class="section-desc">Lessons 6–10 with details for each query.</div></div>
+
+<article class="lesson"><div class="lhd"><div class="lbadge lb2">6</div><div><div class="ltitle">INNER JOIN and LEFT JOIN</div><div class="lsub">Merge related tables correctly</div></div></div>
+<div class="cw"><div class="ch"><span class="cl">Employee + department report</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT e.full_name, e.salary, d.dept_name, d.location
+FROM employees e
+INNER JOIN departments d ON e.department_id = d.department_id
+ORDER BY d.dept_name, e.salary DESC;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>INNER JOIN returns only employees that have a matching department.</li><li><code>ON</code> defines relationship key between tables.</li><li>Sorting groups people by department and salary rank.</li></ol></div></div>
+<div class="cw"><div class="ch"><span class="cl">All products including unsold</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT p.product_name, COALESCE(SUM(oi.quantity),0) AS units_sold
+FROM products p
+LEFT JOIN order_items oi ON p.product_id = oi.product_id
+GROUP BY p.product_id, p.product_name
+ORDER BY units_sold DESC;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>LEFT JOIN keeps all products even with no matching order items.</li><li>SUM becomes NULL when there is no match, COALESCE turns it into 0.</li><li>Essential for stock review and unsold item detection.</li></ol></div></div>
+</article>
+
+<article class="lesson"><div class="lhd"><div class="lbadge lb2">7</div><div><div class="ltitle">GROUP BY + aggregates</div><div class="lsub">Summarize many rows into business metrics</div></div></div>
+<div class="cw"><div class="ch"><span class="cl">Department payroll summary</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT d.dept_name,
+       COUNT(e.employee_id) AS headcount,
+       SUM(e.salary) AS payroll,
+       ROUND(AVG(e.salary),2) AS avg_salary
+FROM departments d
+LEFT JOIN employees e ON d.department_id = e.department_id
+GROUP BY d.department_id, d.dept_name
+ORDER BY payroll DESC;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>GROUP BY creates one row per department.</li><li>COUNT, SUM, AVG calculate key metrics for each group.</li><li>Include department id in GROUP BY for stable grouping key.</li></ol></div></div>
+</article>
+
+<article class="lesson"><div class="lhd"><div class="lbadge lb2">8</div><div><div class="ltitle">HAVING</div><div class="lsub">Filter grouped results after aggregation</div></div></div>
+<div class="cw"><div class="ch"><span class="cl">Only busy customers</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT c.full_name, COUNT(o.order_id) AS order_count
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.full_name
+HAVING COUNT(o.order_id) > 1
+ORDER BY order_count DESC;</code></pre><div class="explain"><h4>Explanation</h4><ol><li><code>WHERE</code> filters rows before grouping, <code>HAVING</code> filters groups after.</li><li>This keeps only customers whose aggregated count is more than one.</li></ol></div></div>
+</article>
+
+<article class="lesson"><div class="lhd"><div class="lbadge lb2">9</div><div><div class="ltitle">CASE expression</div><div class="lsub">Add IF/ELSE style logic in SQL</div></div></div>
+<div class="cw"><div class="ch"><span class="cl">Salary banding</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT full_name, salary,
+  CASE
+    WHEN salary >= 100000 THEN 'Senior / Executive'
+    WHEN salary >= 75000 THEN 'Mid-Level'
+    ELSE 'Entry'
+  END AS salary_band
+FROM employees
+ORDER BY salary DESC;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>CASE evaluates rules top to bottom.</li><li>First matching condition returns corresponding label.</li><li>Useful for bucketing and decision logic in reports.</li></ol></div></div>
+</article>
+
+<article class="lesson"><div class="lhd"><div class="lbadge lb2">10</div><div><div class="ltitle">Subqueries</div><div class="lsub">Use one query as input for another</div></div></div>
+<div class="cw"><div class="ch"><span class="cl">Above-average salary</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT full_name, salary
+FROM employees
+WHERE salary > (SELECT AVG(salary) FROM employees)
+ORDER BY salary DESC;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>Inner query computes company average once.</li><li>Outer query compares each employee salary with that value.</li><li>This pattern is common for benchmark filtering.</li></ol></div></div>
+</article>
+
+</section>
+<div class="footer-nav"><a href="foundations.html">← Previous: Foundations</a><a href="advanced.html">Next: Advanced →</a></div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script><script src="assets/app.js"></script><script>SqlMastery.bootPage('core');</script>
+</body></html>

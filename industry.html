@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Mastery — Industry Patterns</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="top-nav"><div class="nav-inner"><div class="brand">SQL Mastery</div><nav class="nav-links"><a href="Learn Sql.html" data-page="home">Home</a><a href="beginner.html" data-page="beginner">Beginner</a><a href="core.html" data-page="core">Core SQL</a><a href="advanced.html" data-page="advanced">Advanced</a><a href="industry.html" data-page="industry">Industry</a><a href="practice.html" data-page="practice">Practice</a></nav></div></header>
+<main class="page">
+  <section class="hero"><div class="badges"><span class="badge b4">Phase 4</span><span class="badge b3">Production Queries</span></div><h1>Industry Patterns: <em>real business analytics</em></h1><p>These are practical SQL patterns used in product, marketing, CRM and finance teams.</p></section>
+  <section class="runner"><div class="runner-top"><div class="runner-title">⚡ SQL Playground <span class="runner-pill" id="runner-status">DB Loading…</span></div><div class="runner-actions"><button onclick="fillStarter()">Starter</button><button onclick="toggleSchema()">Schema</button><button onclick="clearEditor()">Clear</button><button class="run-btn" onclick="runSQL()">Run (Ctrl+Enter)</button></div></div><textarea id="editor" placeholder="Run an industry query..."></textarea><div class="helper"><span id="db-txt">Loading database…</span></div><div id="schema-panel"><div class="schema-grid" id="schema-grid"></div></div><div class="result-area" id="result"><div class="res-msg">Run a query to see results here.</div></div></section>
+
+  <section class="section"><div class="section-head"><div class="section-tag">Phase 4</div><div class="section-title">Industry SQL Cases</div><div class="section-desc">Lessons 14–18 split into practical patterns with clear explanation.</div></div>
+
+    <article class="lesson"><div class="lhd"><div class="lbadge lb4">14</div><div><div class="ltitle">Deduplication with ROW_NUMBER</div><div class="lsub">Keep latest row per customer email</div></div></div>
+      <div class="cw"><div class="ch"><span class="cl">Dedup preview</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>WITH ranked AS (
+  SELECT *,
+         ROW_NUMBER() OVER (PARTITION BY email ORDER BY customer_id DESC) AS rn
+  FROM customers
+)
+SELECT customer_id, full_name, email, rn
+FROM ranked
+ORDER BY email, rn;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>Partition groups duplicate rows by email.</li><li>Highest <code>customer_id</code> is treated as latest row.</li><li><code>rn = 1</code> means keep row; <code>rn &gt; 1</code> means duplicate.</li></ol></div></div>
+    </article>
+
+    <article class="lesson"><div class="lhd"><div class="lbadge lb4">15</div><div><div class="ltitle">Funnel analysis</div><div class="lsub">Order status share of total</div></div></div>
+      <div class="cw"><div class="ch"><span class="cl">Funnel report</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT
+  status,
+  COUNT(*) AS order_count,
+  SUM(total_amount) AS revenue,
+  ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 1) AS pct_of_orders
+FROM orders
+GROUP BY status
+ORDER BY order_count DESC;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>First aggregation groups data by each status stage.</li><li><code>SUM(COUNT(*)) OVER ()</code> calculates overall total across groups.</li><li>Percentage reveals where most orders are concentrated.</li></ol></div></div>
+    </article>
+
+    <article class="lesson"><div class="lhd"><div class="lbadge lb4">16</div><div><div class="ltitle">Cohort retention</div><div class="lsub">How long customers stay active after signup</div></div></div>
+      <div class="cw"><div class="ch"><span class="cl">Cohort matrix</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>WITH cohorts AS (
+  SELECT customer_id, STRFTIME('%Y-%m', created_at) AS cohort_month
+  FROM customers
+), activity AS (
+  SELECT c.cohort_month, o.customer_id,
+         CAST((STRFTIME('%Y', o.order_date) - STRFTIME('%Y', c.cohort_month)) * 12
+             + (STRFTIME('%m', o.order_date) - STRFTIME('%m', c.cohort_month)) AS INTEGER) AS months_since_signup
+  FROM orders o
+  JOIN cohorts c ON o.customer_id = c.customer_id
+  WHERE o.status = 'delivered'
+)
+SELECT cohort_month, months_since_signup, COUNT(DISTINCT customer_id) AS active_customers
+FROM activity
+GROUP BY cohort_month, months_since_signup
+ORDER BY cohort_month, months_since_signup;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>Create signup cohort (month of registration).</li><li>Measure months between signup and each delivered order.</li><li>Group to see how many users remain active over time.</li></ol></div></div>
+    </article>
+
+    <article class="lesson"><div class="lhd"><div class="lbadge lb4">17</div><div><div class="ltitle">RFM segmentation</div><div class="lsub">Rank customers by recency, frequency and money</div></div></div>
+      <div class="cw"><div class="ch"><span class="cl">RFM scoring</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>WITH rfm AS (
+  SELECT customer_id,
+         JULIANDAY('2023-12-01') - JULIANDAY(MAX(order_date)) AS recency,
+         COUNT(*) AS frequency,
+         SUM(total_amount) AS monetary
+  FROM orders
+  WHERE status != 'cancelled'
+  GROUP BY customer_id
+), scored AS (
+  SELECT *,
+         4 - NTILE(3) OVER (ORDER BY recency DESC) AS r,
+         NTILE(3) OVER (ORDER BY frequency) AS f,
+         NTILE(3) OVER (ORDER BY monetary) AS m
+  FROM rfm
+)
+SELECT customer_id, r, f, m, (r+f+m) AS total_score
+FROM scored
+ORDER BY total_score DESC;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>Build base metrics per customer.</li><li>Use <code>NTILE(3)</code> to split each metric into low/mid/high score.</li><li>Combined score helps prioritize campaign targeting.</li></ol></div></div>
+    </article>
+
+    <article class="lesson"><div class="lhd"><div class="lbadge lb4">18</div><div><div class="ltitle">LTV and churn flags</div><div class="lsub">Detect inactive customers and value gap</div></div></div>
+      <div class="cw"><div class="ch"><span class="cl">LTV + churn</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>WITH metrics AS (
+  SELECT customer_id,
+         SUM(total_amount) AS lifetime_value,
+         MAX(order_date) AS last_order,
+         CAST(JULIANDAY('2023-12-01') - JULIANDAY(MAX(order_date)) AS INTEGER) AS days_inactive
+  FROM orders
+  WHERE status != 'cancelled'
+  GROUP BY customer_id
+)
+SELECT customer_id, lifetime_value, days_inactive,
+       CASE
+         WHEN days_inactive <= 30 THEN 'Active'
+         WHEN days_inactive <= 60 THEN 'At Risk'
+         ELSE 'Churned'
+       END AS churn_status
+FROM metrics
+ORDER BY lifetime_value DESC;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>Calculate each customer’s total value and last activity date.</li><li>Compute inactivity days relative to reference date.</li><li>CASE labels customer into operational churn buckets.</li></ol></div></div>
+    </article>
+  </section>
+
+  <div class="footer-nav"><a href="advanced.html">← Previous: Advanced</a><a href="practice.html">Next: Practice →</a></div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script><script src="assets/app.js"></script><script>SqlMastery.bootPage('industry');</script>
+</body></html>

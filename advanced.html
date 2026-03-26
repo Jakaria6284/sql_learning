@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SQL Mastery — Advanced</title><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/style.css"></head>
+<body>
+<header class="top-nav"><div class="nav-inner"><div class="brand">SQL Mastery</div><nav class="nav-links"><a href="Learn Sql.html" data-page="home">Home</a><a href="beginner.html" data-page="beginner">Beginner</a><a href="core.html" data-page="core">Core SQL</a><a href="advanced.html" data-page="advanced">Advanced</a><a href="industry.html" data-page="industry">Industry</a><a href="practice.html" data-page="practice">Practice</a></nav></div></header>
+<main class="page">
+<section class="hero"><div class="badges"><span class="badge b3">Phase 3</span><span class="badge b2">Advanced SQL</span></div><h1>Advanced SQL: <em>readable complex analysis</em></h1><p>This page includes CTEs, window functions, and safe DML patterns with practical explanations for each query.</p></section>
+<section class="runner"><div class="runner-top"><div class="runner-title">⚡ SQL Playground <span class="runner-pill" id="runner-status">DB Loading…</span></div><div class="runner-actions"><button onclick="fillStarter()">Starter</button><button onclick="toggleSchema()">Schema</button><button onclick="clearEditor()">Clear</button><button class="run-btn" onclick="runSQL()">Run (Ctrl+Enter)</button></div></div><textarea id="editor" placeholder="Run advanced SQL query..."></textarea><div class="helper"><span id="db-txt">Loading database…</span></div><div id="schema-panel"><div class="schema-grid" id="schema-grid"></div></div><div class="result-area" id="result"><div class="res-msg">Run a query to see results here.</div></div></section>
+
+<section class="section"><div class="section-head"><div class="section-tag">Phase 3 Lessons</div><div class="section-title">CTE, Window Functions, DML</div><div class="section-desc">Lessons 11–13 explained in step-by-step format.</div></div>
+
+<article class="lesson"><div class="lhd"><div class="lbadge lb3">11</div><div><div class="ltitle">CTEs (WITH)</div><div class="lsub">Break big query into clear steps</div></div></div>
+<div class="cw"><div class="ch"><span class="cl">VIP customers with CTE</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>WITH customer_spend AS (
+  SELECT customer_id, SUM(total_amount) AS total_spend
+  FROM orders
+  GROUP BY customer_id
+)
+SELECT c.full_name, cs.total_spend
+FROM customer_spend cs
+JOIN customers c ON cs.customer_id = c.customer_id
+WHERE cs.total_spend > 300
+ORDER BY cs.total_spend DESC;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>CTE computes spend once and gives it a reusable name.</li><li>Main query stays short and readable.</li><li>Best practice when query has multiple logical steps.</li></ol></div></div>
+</article>
+
+<article class="lesson"><div class="lhd"><div class="lbadge lb3">12</div><div><div class="ltitle">Window functions</div><div class="lsub">Calculate rankings and trends without collapsing rows</div></div></div>
+<div class="cw"><div class="ch"><span class="cl">Top 2 earners per department</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>WITH ranked AS (
+  SELECT e.full_name, d.dept_name, e.salary,
+         DENSE_RANK() OVER (
+           PARTITION BY e.department_id
+           ORDER BY e.salary DESC
+         ) AS rnk
+  FROM employees e
+  JOIN departments d ON e.department_id = d.department_id
+)
+SELECT dept_name, full_name, salary, rnk
+FROM ranked
+WHERE rnk <= 2
+ORDER BY dept_name, rnk;</code></pre><div class="explain"><h4>Explanation</h4><ol><li><code>PARTITION BY</code> resets ranking inside each department.</li><li><code>DENSE_RANK</code> keeps ties at same rank without gaps.</li><li>Filter <code>rnk &lt;= 2</code> to keep top-N per group.</li></ol></div></div>
+
+<div class="cw"><div class="ch"><span class="cl">Month over month change with LAG</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>WITH monthly AS (
+  SELECT STRFTIME('%Y-%m', order_date) AS month,
+         SUM(total_amount) AS revenue
+  FROM orders
+  WHERE status = 'delivered'
+  GROUP BY STRFTIME('%Y-%m', order_date)
+)
+SELECT month, revenue,
+       LAG(revenue) OVER (ORDER BY month) AS prev_month,
+       ROUND((revenue - LAG(revenue) OVER (ORDER BY month)) * 100.0 /
+             NULLIF(LAG(revenue) OVER (ORDER BY month), 0), 1) AS mom_pct
+FROM monthly
+ORDER BY month;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>LAG fetches previous row’s revenue for comparison.</li><li>Formula computes month-over-month percentage change.</li><li><code>NULLIF(...,0)</code> prevents divide-by-zero errors.</li></ol></div></div>
+</article>
+
+<article class="lesson"><div class="lhd"><div class="lbadge lb3">13</div><div><div class="ltitle">INSERT / UPDATE / DELETE safely</div><div class="lsub">Write operations with preview-first habit</div></div></div>
+<div class="cw"><div class="ch"><span class="cl">Insert and verify</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>INSERT INTO products (product_id, product_name, category, unit_price, stock_qty)
+VALUES (16, 'Standing Desk Pro', 'Accessories', 399.99, 30);
+
+SELECT * FROM products WHERE product_id = 16;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>INSERT adds new row into target table.</li><li>Immediate SELECT confirms write happened correctly.</li></ol></div></div>
+
+<div class="cw"><div class="ch"><span class="cl">Update with preview</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT product_name, unit_price
+FROM products
+WHERE category = 'Electronics' AND stock_qty > 200;
+
+-- UPDATE products
+-- SET unit_price = unit_price * 0.90
+-- WHERE category = 'Electronics' AND stock_qty > 200;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>Run SELECT first to preview affected rows.</li><li>If preview is correct, execute UPDATE section.</li><li>This prevents accidental mass changes in production.</li></ol></div></div>
+<div class="call ct">💡 Safe rule: before every UPDATE/DELETE, run the same WHERE in a SELECT COUNT(*) preview.</div>
+</article>
+</section>
+<div class="footer-nav"><a href="core.html">← Previous: Core SQL</a><a href="industry.html">Next: Industry →</a></div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script><script src="assets/app.js"></script><script>SqlMastery.bootPage('advanced');</script>
+</body></html>

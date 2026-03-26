@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Made Simple — Learn for Everyone</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="top-nav"><div class="nav-inner"><div class="brand">SQL Made Simple</div><nav class="nav-links"><a href="Learn Sql.html" data-page="home">Home</a><a href="beginner.html" data-page="beginner">Beginner</a><a href="core.html" data-page="core">Core SQL</a><a href="advanced.html" data-page="advanced">Advanced</a><a href="industry.html" data-page="industry">Industry</a><a href="practice.html" data-page="practice">Practice</a></nav></div></header>
+
+<main class="page">
+  <section class="hero">
+    <h1>Learn SQL <em>in Simple Steps</em></h1>
+    <p>SQL helps you ask questions about data and get exactly what you need. Start simple, practice with real examples, then master advanced patterns. Each section is focused and easy to follow.</p>
+    <div class="hero-stats"><div><div class="n">6</div><div class="l">Learning phases</div></div><div><div class="n">50+</div><div class="l">Runnable examples</div></div><div><div class="n">100%</div><div class="l">Learn by doing</div></div></div>
+
+    <div class="link-grid">
+      <a class="link-card" href="beginner.html"><h3>Phase 1 — Beginner's Master Class</h3><p>Complete guide: SELECT, WHERE, filtering, sorting, aggregates, CASE, and real-world examples.</p></a>
+      <a class="link-card" href="core.html"><h3>Phase 2 — Connecting Data</h3><p>Join tables together, combine information, write smarter queries.</p></a>
+      <a class="link-card" href="advanced.html"><h3>Phase 3 — Advanced Patterns</h3><p>Window functions, temporary tables, complex analysis.</p></a>
+      <a class="link-card" href="industry.html"><h3>Phase 4 — Real-World Cases</h3><p>Practical business analysis: duplicate removal, funnels, customer metrics.</p></a>
+      <a class="link-card" href="practice.html"><h3>Phase 5 — Challenge Mode</h3><p>Test your skills with real questions and see solutions explained.</p></a>
+    </div>
+  </section>
+
+  <section class="runner">
+    <div class="runner-top">
+      <div class="runner-title">⚡ SQL Playground <span class="runner-pill" id="runner-status">DB Loading…</span></div>
+      <div class="runner-actions"><button onclick="fillStarter()">Starter</button><button onclick="toggleSchema()">Schema</button><button onclick="clearEditor()">Clear</button><button class="run-btn" onclick="runSQL()">Run (Ctrl+Enter)</button></div>
+    </div>
+    <textarea id="editor" placeholder="Try SQL instantly from this home page..."></textarea>
+    <div class="helper"><span id="db-txt">Loading database…</span></div>
+    <div id="schema-panel"><div class="schema-grid" id="schema-grid"></div></div>
+    <div class="result-area" id="result"><div class="res-msg">Run a query to see results here.</div></div>
+  </section>
+
+  <section class="section"><div class="section-head"><div class="section-tag">How to use</div><div class="section-title">Simple learning flow</div><div class="section-desc">Read explanation → run query → inspect output → move to next page.</div></div>
+    <article class="lesson"><p>Every learning page keeps the same design, same playground, and same data schema. The only thing that changes is lesson depth, so users stay focused and never overwhelmed by one long page.</p><div class="call cg">✅ This structure is better for retention because learners complete one phase at a time.</div></article>
+  </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script>
+<script src="assets/app.js"></script>
+<script>SqlMastery.bootPage('home');</script>
+</body>
+</html>

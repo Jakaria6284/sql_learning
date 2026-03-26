@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Made Simple — Easy for Everyone</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.simple-box { background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #2196F3; }
+.key-idea { background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 10px 0; color: #1565c0; font-weight: 500; }
+.plain-text { font-size: 15px; line-height: 1.7; color: #333; }
+.comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 15px 0; }
+.wrong-way { background: #ffebee; padding: 15px; border-radius: 8px; border-left: 4px solid #d32f2f; }
+.right-way { background: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 4px solid #388e3c; }
+</style>
+</head>
+<body>
+<header class="top-nav"><div class="nav-inner"><div class="brand">SQL Made Simple</div><nav class="nav-links"><a href="Learn Sql.html" data-page="home">Home</a><a href="beginner.html" data-page="beginner">Beginner</a><a href="core.html" data-page="core">Core SQL</a><a href="advanced.html" data-page="advanced">Advanced</a><a href="industry.html" data-page="industry">Industry</a><a href="practice.html" data-page="practice">Practice</a></nav></div></header>
+
+<main class="page">
+  <section class="hero">
+    <h1>SQL <em>Made Simple</em></h1>
+    <p class="plain-text">SQL is how you ask questions about data. Instead of reading through thousands of rows manually, you write a simple question and get exactly what you need. Let's learn by doing with real examples.</p>
+  </section>
+
+  <section class="runner">
+    <div class="runner-top">
+      <div class="runner-title">Try SQL Here <span class="runner-pill" id="runner-status">Loading…</span></div>
+      <div class="runner-actions">
+        <button onclick="fillStarter()">Example</button>
+        <button onclick="toggleSchema()">View Data</button>
+        <button onclick="clearEditor()">Clear</button>
+        <button class="run-btn" onclick="runSQL()">Run (Ctrl+Enter)</button>
+      </div>
+    </div>
+    <textarea id="editor" placeholder="Write SQL here..."></textarea>
+    <div class="helper"><span id="db-txt">Loading…</span></div>
+    <div id="schema-panel"><div class="schema-grid" id="schema-grid"></div></div>
+    <div class="result-area" id="result"><div class="res-msg">Run a query to see results here.</div></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div class="section-tag">Part 1</div><div class="section-title">Exploring Your First Database</div><div class="section-desc">Understand what data exists before you query it.</div></div>
+    
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">📖</div><div><div class="ltitle">Understanding the Database</div><div class="lsub">Step 1: Know your tables</div></div></div>
+      <p><strong>Tutorial:</strong> Before writing any query, a SQL expert always asks: What tables do I have? How many rows? What columns? This prevents mistakes and saves hours.</p>
+      <div class="cw"><div class="ch"><span class="cl">Count rows in each table</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT 'departments' AS table_name, COUNT(*) AS row_count FROM departments
+UNION ALL SELECT 'employees', COUNT(*) FROM employees
+UNION ALL SELECT 'customers', COUNT(*) FROM customers
+UNION ALL SELECT 'products', COUNT(*) FROM products
+UNION ALL SELECT 'orders', COUNT(*) FROM orders
+UNION ALL SELECT 'order_items', COUNT(*) FROM order_items;</code></pre>
+      <div class="explain"><h4>Why This Matters</h4><ol><li>6+ tables with different purposes (who buys what, employee structure).</li><li>Row counts tell you scale: 100 rows vs 10 million changes query strategy.</li><li><code>UNION ALL</code> stacks multiple SELECT results vertically.</li><li><strong>Real-world:</strong> When inheriting a database, always run this first to get oriented.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">📖</div><div><div class="ltitle">Inspect a Single Table</div><div class="lsub">Step 2: Preview the data</div></div></div>
+      <p><strong>Real-world scenario:</strong> Your boss says "Pull me a list of products." Where's the first place to look?</p>
+      <div class="cw"><div class="ch"><span class="cl">Peek at products</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT * FROM products LIMIT 5;</code></pre>
+      <div class="explain"><h4>Why This Works</h4><ol><li><code>SELECT *</code> grabs every column so you see all detail.</li><li><code>LIMIT 5</code> only shows first 5 rows (prevents loading 1 million!).</li><li>Now you see: id, name, category, price, stock, etc.</li></ol></div></div>
+
+      <div class="cw"><div class="ch"><span class="cl">Check unique categories</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT DISTINCT category FROM products ORDER BY category;</code></pre>
+      <div class="explain"><h4>Why This Matters</h4><ol><li><code>DISTINCT</code> removes duplicates so you see each value once.</li><li>Answers "what product types exist?"—critical before filtering.</li><li><strong>Use case:</strong> Building dropdown menus for reports.</li></ol></div></div>
+    </article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div class="section-tag">Part 2</div><div class="section-title">SELECT & Columns (Reading Data)</div><div class="section-desc">Pick the right columns and create new ones from math.</div></div>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">1️⃣</div><div><div class="ltitle">SELECT Specific Columns</div><div class="lsub">Why <code>SELECT *</code> is bad practice</div></div></div>
+      <p><strong>Tutorial:</strong> In production, never fetch all columns. It's slow, clutters reports, and breaks when someone adds a new column.</p>
+      <div class="cw"><div class="ch"><span class="cl">❌ BAD: Select all columns</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT * FROM products;</code></pre>
+      <div class="explain"><h4>Problems</h4><ol><li>Fetches data you don't need (waste of bandwidth).</li><li>If table adds a new column, your app might break.</li><li>Reports look messy with 20 irrelevant fields.</li></ol></div></div>
+
+      <div class="cw"><div class="ch"><span class="cl">✅ GOOD: Select needed columns</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT product_name, category, unit_price FROM products;</code></pre>
+      <div class="explain"><h4>Best Practices</h4><ol><li>Only 3 columns → faster, cleaner, more maintainable.</li><li>Code is self-documenting: "I need name, category, and price."</li><li><strong>Real query:</strong> Sales team needs product margins by category, not inventory details.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">2️⃣</div><div><div class="ltitle">Column Aliases (AS)</div><div class="lsub">Rename columns for clarity</div></div></div>
+      <p><strong>Tutorial:</strong> <code>AS</code> renames a column in the output. Useful for computed values and reports.</p>
+      <div class="cw"><div class="ch"><span class="cl">Inventory value calculation</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT
+  product_name,
+  unit_price AS price,
+  stock_qty AS quantity_in_stock,
+  unit_price * stock_qty AS total_inventory_value
+FROM products;</code></pre>
+      <div class="explain"><h4>Why AS Matters</h4><ol><li>Without <code>AS price</code>, output column shows "unit_price" (less clear).</li><li>Created column: <code>unit_price * stock_qty</code> automatically becomes <code>total_inventory_value</code>.</li><li><strong>Real world:</strong> Finance sends report to CEO; they need "Total Inventory Value", not a formula.</li></ol></div></div>
+
+      <div class="cw"><div class="ch"><span class="cl">Employee salary grades</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT 
+  full_name, 
+  salary,
+  salary * 0.15 AS annual_bonus
+FROM employees;</code></pre>
+      <div class="explain"><h4>Calculation Tips</h4><ol><li><code>salary * 0.15</code> calculates 15% bonus on the fly.</li><li>No new table needed; the math happens in query output.</li></ol></div></div>
+    </article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div class="section-tag">Part 3</div><div class="section-title">WHERE (Filtering Rows)</div><div class="section-desc">Keep only the data you need.</div></div>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">3️⃣</div><div><div class="ltitle">Basic Filters</div><div class="lsub">Find rows that match conditions</div></div></div>
+      <p><strong>Tutorial:</strong> <code>WHERE</code> runs BEFORE sorting/grouping. It cuts down results first, making queries faster.</p>
+      <div class="cw"><div class="ch"><span class="cl">Electronics over $100</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT product_name, category, unit_price
+FROM products
+WHERE category = 'Electronics' AND unit_price > 100;</code></pre>
+      <div class="explain"><h4>How It Works</h4><ol><li><code>category = 'Electronics'</code> is condition 1.</li><li><code>unit_price > 100</code> is condition 2.</li><li><code>AND</code> means BOTH must be true (not OR).</li><li><strong>Performance:</strong> Database checks WHERE first, so this scans fewer rows than fetching all then filtering in code.</li></ol></div></div>
+
+      <div class="cw"><div class="ch"><span class="cl">Customers from USA or Canada</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT full_name, country, city
+FROM customers
+WHERE country IN ('USA', 'Canada');</code></pre>
+      <div class="explain"><h4>IN vs OR</h4><ol><li><code>IN ('USA', 'Canada')</code> is cleaner than <code>country = 'USA' OR country = 'Canada'</code>.</li><li>Much better readability; less error-prone.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">4️⃣</div><div><div class="ltitle">Range & Pattern Filters</div><div class="lsub">BETWEEN and LIKE for flexible searches</div></div></div>
+      <p><strong>Tutorial:</strong> Sometimes you need a range (BETWEEN) or fuzzy match (LIKE).</p>
+      <div class="cw"><div class="ch"><span class="cl">Products in price range</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT product_name, unit_price
+FROM products
+WHERE unit_price BETWEEN 50 AND 150;</code></pre>
+      <div class="explain"><h4>BETWEEN Syntax</h4><ol><li>Includes both 50 AND 150 (not exclusive).</li><li>Same as: <code>unit_price >= 50 AND unit_price <= 150</code> but more readable.</li></ol></div></div>
+
+      <div class="cw"><div class="ch"><span class="cl">Find "Keyboard" products</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT product_name, unit_price
+FROM products
+WHERE product_name LIKE '%Keyboard%';</code></pre>
+      <div class="explain"><h4>LIKE Patterns</h4><ol><li><code>%</code> = any characters before/after.</li><li><code>WHERE product_name LIKE 'M%'</code> finds names starting with M.</li><li><code>WHERE product_name LIKE '%Pro'</code> finds names ending with Pro.</li><li><strong>Real case:</strong> Customers search for "keyboard" but catalog has "Mechanical Keyboard RGB Pro"—LIKE finds it.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">5️⃣</div><div><div class="ltitle">NULL Handling</div><div class="lsub">The most common beginner mistake</div></div></div>
+      <p><strong>WARNING:</strong> This trips up 90% of SQL beginners. Pay close attention.</p>
+      <div class="cw"><div class="ch"><span class="cl">❌ WRONG: Using = NULL</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>-- This does NOT find employees with no manager
+-- It returns ZERO rows, confusing everyone
+SELECT full_name, job_title
+FROM employees
+WHERE manager_id = NULL;</code></pre>
+      <div class="explain"><h4>Why It Fails</h4><ol><li>In SQL, NULL means "unknown" or "missing value".</li><li><code>NULL = anything</code> is neither true nor false; it's UNKNOWN.</li><li>So <code>WHERE manager_id = NULL</code> matches ZERO rows.</li></ol></div></div>
+
+      <div class="cw"><div class="ch"><span class="cl">✅ CORRECT: Using IS NULL</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT full_name, job_title
+FROM employees
+WHERE manager_id IS NULL;</code></pre>
+      <div class="explain"><h4>The Right Way</h4><ol><li><code>IS NULL</code> specifically tests for missing values.</li><li>This correctly finds top-level employees (CEOs, department heads).</li><li>Equivalently, <code>IS NOT NULL</code> finds employees with a boss.</li></ol></div></div>
+    </article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div class="section-tag">Part 4</div><div class="section-title">ORDER BY & LIMIT (Sorting & Top-N)</div><div class="section-desc">Get results in order, show only top rows.</div></div>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">6️⃣</div><div><div class="ltitle">Sorting (ORDER BY)</div><div class="lsub">ASC for low-to-high, DESC for high-to-low</div></div></div>
+      <p><strong>Tutorial:</strong> By default, results have no guaranteed order. <code>ORDER BY</code> sorts them.</p>
+      <div class="cw"><div class="ch"><span class="cl">Most expensive products first</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT product_name, category, unit_price
+FROM products
+ORDER BY unit_price DESC;</code></pre>
+      <div class="explain"><h4>DESC = Descending</h4><ol><li><code>DESC</code> = high to low (descending).</li><li><code>ASC</code> = low to high (ascending, the default).</li><li><strong>Business case:</strong> Sales manager wants top revenue products first for the dashboard.</li></ol></div></div>
+
+      <div class="cw"><div class="ch"><span class="cl">Alphabetical product list</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT product_name, category
+FROM products
+ORDER BY product_name ASC;</code></pre>
+      <div class="explain"><h4>Multiple Columns</h4><ol><li>You can sort by 2+ columns: <code>ORDER BY category, product_name</code>.</li><li>First sorts by category, then within each category sorts by product name.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">7️⃣</div><div><div class="ltitle">Top-N Results (LIMIT)</div><div class="lsub">Show only the first N results</div></div></div>
+      <p><strong>Tutorial:</strong> <code>LIMIT</code> stops output at N rows. Essential for top-10 lists, dashboards, and pagination.</p>
+      <div class="cw"><div class="ch"><span class="cl">Top 5 most expensive items</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT product_name, category, unit_price
+FROM products
+ORDER BY unit_price DESC
+LIMIT 5;</code></pre>
+      <div class="explain"><h4>Why This is Fast</h4><ol><li>Database returns 5 rows instead of all 100+ products.</li><li>Network bandwidth is saved.</li><li>Report page shows "Top 5" not "Top 100" (CEO wants concise view).</li></ol></div></div>
+
+      <div class="cw"><div class="ch"><span class="cl">Skip results (OFFSET)</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT product_name, unit_price
+FROM products
+ORDER BY unit_price DESC
+LIMIT 5 OFFSET 5;</code></pre>
+      <div class="explain"><h4>Pagination Pattern</h4><ol><li><code>LIMIT 5 OFFSET 5</code> skips first 5, shows next 5 (items 6-10).</li><li>Use for: "Next Page" button in web apps.</li><li>Page 1: OFFSET 0, Page 2: OFFSET 5, Page 3: OFFSET 10, etc.</li></ol></div></div>
+    </article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div class="section-tag">Part 5</div><div class="section-title">Combining SELECT, WHERE, ORDER BY</div><div class="section-desc">These three are the foundation of 80% of all queries.</div></div>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">🎯</div><div><div class="ltitle">Complete Guided Walkthrough</div><div class="lsub">Real scenario: build a customer report</div></div></div>
+      <p><strong>Scenario:</strong> Marketing wants: "Show me USA customers sorted by last order date, top 20."</p>
+      
+      <div class="walkthrough">
+        <h4>Step 1: Know Your Table</h4>
+        <p>What columns do customers have?</p>
+        <div class="cw"><div class="ch"><span class="cl">Inspect customers table</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT * FROM customers LIMIT 3;</code></pre></div>
+        <p><em>Result: we see full_name, country, city, email, etc.</em></p>
+
+        <h4>Step 2: Filter</h4>
+        <p>Keep only USA.</p>
+        <div class="cw"><div class="ch"><span class="cl">USA only</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT full_name, country, email
+FROM customers
+WHERE country = 'USA';</code></pre></div>
+
+        <h4>Step 3: Add Details</h4>
+        <p>But we need to know their last order. This requires a JOIN (next section), so for now show what we have ordered by name:</p>
+        <div class="cw"><div class="ch"><span class="cl">USA customers, sorted</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT full_name, email, city
+FROM customers
+WHERE country = 'USA'
+ORDER BY full_name
+LIMIT 20;</code></pre></div>
+
+        <div class="call cg">✅ Most beginner queries follow this pattern: SELECT → FROM → WHERE → ORDER BY → LIMIT. Memorize this order!</div>
+      </div>
+    </article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div class="section-tag">Part 6</div><div class="section-title">DISTINCT (Remove Duplicates)</div><div class="section-desc">Many analyses need "unique values".</div></div>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">8️⃣</div><div><div class="ltitle">DISTINCT Basics</div><div class="lsub">Show each value once</div></div></div>
+      <p><strong>Tutorial:</strong> <code>DISTINCT</code> removes duplicate rows. Critical for "How many unique...?" questions.</p>
+      <div class="cw"><div class="ch"><span class="cl">All customer countries (duplicates removed)</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT DISTINCT country
+FROM customers
+ORDER BY country;</code></pre>
+      <div class="explain"><h4>Why This Helps</h4><ol><li>We have 50 customers but only 5 countries.</li><li><code>SELECT DISTINCT country</code> shows each country once.</li><li>Useful for building dropdown filters in dashboards.</li></ol></div></div>
+
+      <div class="cw"><div class="ch"><span class="cl">How many product categories?</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT COUNT(DISTINCT category) AS num_categories
+FROM products;</code></pre>
+      <div class="explain"><h4>Combined with COUNT</h4><ol><li><code>COUNT(DISTINCT category)</code> counts unique categories.</li><li>We have 100+ products but only 4 categories.</li></ol></div></div>
+    </article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div class="section-tag">Part 7</div><div class="section-title">GROUP BY & Aggregates</div><div class="section-desc">Summarize data: COUNT, SUM, AVG, MAX, MIN.</div></div>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">9️⃣</div><div><div class="ltitle">Counting & Summing</div><div class="lsub">Aggregate rows into summaries</div></div></div>
+      <p><strong>Tutorial:</strong> <code>GROUP BY</code> collapses rows. Useful for "revenue by category", "employees by department", etc.</p>
+      <div class="cw"><div class="ch"><span class="cl">Sales (order count) by product category</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT 
+  p.category,
+  COUNT(oi.order_item_id) AS items_sold,
+  SUM(oi.quantity) AS total_units
+FROM products p
+JOIN order_items oi ON p.product_id = oi.product_id
+GROUP BY p.category;</code></pre>
+      <div class="explain"><h4>How GROUP BY Works</h4><ol><li>All products are bunched into their category.</li><li><code>COUNT</code> counts rows per group.</li><li><code>SUM(oi.quantity)</code> adds quantities per group.</li><li><strong>Result:</strong> Electronics 150 units sold, Furniture 200 units, etc.</li></ol></div></div>
+
+      <div class="cw"><div class="ch"><span class="cl">Headcount and salary by department</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT 
+  d.dept_name,
+  COUNT(e.employee_id) AS headcount,
+  SUM(e.salary) AS total_payroll,
+  AVG(e.salary) AS avg_salary
+FROM departments d
+LEFT JOIN employees e ON d.department_id = e.department_id
+GROUP BY d.department_id, d.dept_name;</code></pre>
+      <div class="explain"><h4>Multiple Aggregates</h4><ol><li><code>COUNT</code> = how many employees.</li><li><code>SUM(salary)</code> = total payroll cost.</li><li><code>AVG(salary)</code> = average salary per department.</li><li><strong>Real-world:</strong> CFO reviews this to understand cost center budgets.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">🔟</div><div><div class="ltitle">HAVING (Filter Groups)</div><div class="lsub">WHERE filters before grouping, HAVING filters after</div></div></div>
+      <p><strong>Tutorial:</strong> <code>HAVING</code> filters groups. Use when condition uses aggregates like COUNT or SUM.</p>
+      <div class="cw"><div class="ch"><span class="cl">Categories with 20+ items sold</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT 
+  p.category,
+  COUNT(oi.order_item_id) AS items_sold
+FROM products p
+LEFT JOIN order_items oi ON p.product_id = oi.product_id
+GROUP BY p.category
+HAVING COUNT(oi.order_item_id) >= 20;</code></pre>
+      <div class="explain"><h4>WHERE vs HAVING</h4><ol><li><code>WHERE category = 'Electronics'</code> filters rows BEFORE grouping.</li><li><code>HAVING COUNT(...) >= 20</code> filters groups AFTER aggregation.</li><li>If you use aggregate in filter, HAVING is required.</li></ol></div></div>
+    </article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div class="section-tag">Part 8</div><div class="section-title">CASE WHEN (Conditional Logic)</div><div class="section-desc">Add IF/THEN logic directly in SQL.</div></div>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">⭐</div><div><div class="ltitle">Categorize Using CASE</div><div class="lsub">Transform values in output</div></div></div>
+      <p><strong>Tutorial:</strong> <code>CASE WHEN</code> is like IF/THEN in other languages. Test conditions and return different values.</p>
+      <div class="cw"><div class="ch"><span class="cl">Salary bands</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT 
+  full_name, 
+  salary,
+  CASE
+    WHEN salary >= 100000 THEN 'Senior (100K+)'
+    WHEN salary >= 75000 THEN 'Mid (75K-99K)'
+    WHEN salary >= 50000 THEN 'Junior (50K-74K)'
+    ELSE 'Entry (<50K)'
+  END AS salary_band
+FROM employees
+ORDER BY salary DESC;</code></pre>
+      <div class="explain"><h4>How CASE Works</h4><ol><li>Tests conditions top to bottom.</li><li>First TRUE condition wins (ignores rest).</li><li><code>ELSE</code> catches anything that didn't match.</li><li><strong>Real use:</strong> Sales report showing commission tier based on annual revenue.</li></ol></div></div>
+
+      <div class="cw"><div class="ch"><span class="cl">Product quality classification</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT 
+  product_name,
+  unit_price,
+  CASE
+    WHEN unit_price < 25 THEN 'Budget'
+    WHEN unit_price < 75 THEN 'Standard'
+    WHEN unit_price < 200 THEN 'Premium'
+    ELSE 'Luxury'
+  END AS price_tier
+FROM products
+ORDER BY unit_price DESC;</code></pre>
+      <div class="explain"><h4>Chaining Conditions</h4><ol><li>Each tier is called a WHEN clause.</li><li>Creates a new output column called price_tier.</li></ol></div></div>
+    </article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div class="section-tag">Part 9</div><div class="section-title">Intro to JOINs (Preview)</div><div class="section-desc">Connect data across tables—covered deeply in Core SQL.</div></div>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">🚀</div><div><div class="ltitle">Why JOINs Matter</div><div class="lsub">Real databases have multiple tables</div></div></div>
+      <p><strong>Tutorial:</strong> Databases split data into tables (employees go in one, departments in another) to avoid duplication. JOINs reconnect them.</p>
+      <div class="cw"><div class="ch"><span class="cl">Employee + Department info together</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT 
+  e.full_name,
+  e.salary,
+  d.dept_name
+FROM employees e
+INNER JOIN departments d ON e.department_id = d.department_id;</code></pre>
+      <div class="explain"><h4>What This Does</h4><ol><li><code>FROM employees e</code> = start with employee rows.</li><li><code>INNER JOIN departments d ON ...</code> = connect to department table.</li><li><code>ON e.department_id = d.department_id</code> = use this column to match.</li><li>Result: each employee shows their name + salary + department name.</li><li><strong>Next step:</strong> Core SQL section covers JOINS in depth.</li></ol></div></div>
+    </article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div class="section-tag">Next Steps</div><div class="section-title">You're Ready for Core SQL</div><div class="section-desc">Now learn JOINs, Subqueries, Window Functions.</div></div>
+    <article class="lesson">
+      <p>Congratulations! You've mastered the beginner fundamentals:</p>
+      <ul style="list-style:none; padding:0;">
+        <li>✅ SELECT & columns with aliases</li>
+        <li>✅ WHERE filtering (basic, range, pattern, NULL)</li>
+        <li>✅ ORDER BY & LIMIT sorting</li>
+        <li>✅ GROUP BY & aggregates (COUNT, SUM, AVG)</li>
+        <li>✅ CASE WHEN conditional logic</li>
+        <li>✅ DISTINCT unique values</li>
+      </ul>
+      <p>The next phase introduces JOINs (combining tables), subqueries (queries inside queries), and advanced patterns. Ready?</p>
+    </article>
+  </section>
+
+  <div class="footer-nav"><a href="Learn Sql.html">← Back to Home</a><a href="core.html">Next: Core SQL →</a></div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script>
+<script src="assets/app.js"></script>
+<script>SqlMastery.bootPage('beginner');</script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Mastery — SQL Syntax Tutorial</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="top-nav"><div class="nav-inner"><div class="brand">SQL Mastery</div><nav class="nav-links"><a href="Learn Sql.html" data-page="home">Home</a><a href="beginner.html" data-page="beginner">Beginner</a><a href="core.html" data-page="core">Core SQL</a><a href="advanced.html" data-page="advanced">Advanced</a><a href="industry.html" data-page="industry">Industry</a><a href="practice.html" data-page="practice">Practice</a></nav></div></header>
+
+<main class="page">
+  <section class="hero">
+    <div class="badges"><span class="badge b2">Step by Step</span><span class="badge b3">Real-World Examples</span><span class="badge b5">40+ Runnable Queries</span></div>
+    <h1>SQL <em>Beginner's Master Class</em></h1>
+    <p>Learn SQL from zero: SELECT, WHERE, filtering, sorting, GROUP BY, CASE, and real-world use cases. Each concept includes tutorial, questions, examples, and detailed explanations.</p>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div class="section-tag">Beginner Concepts</div><div class="section-title">Tutorial → Real-world Example → Detailed Explanation</div><div class="section-desc">Covers all core SQL syntax for reading and summarizing data.</div></div>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">1</div><div><div class="ltitle">SELECT + FROM</div><div class="lsub">Tutorial: read columns from a table</div></div></div>
+      <p><strong>Tutorial:</strong> <code>SELECT</code> chooses columns. <code>FROM</code> chooses source table.</p>
+      <p><strong>Question:</strong> Show product name, category, and price for all products.</p>
+      <div class="cw"><div class="ch"><span class="cl">SQL Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT product_name, category, unit_price
+FROM products;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>Only selected columns are returned, not full row.</li><li>This keeps results clean and faster than <code>SELECT *</code> in production.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">2</div><div><div class="ltitle">WHERE</div><div class="lsub">Tutorial: filter rows by condition</div></div></div>
+      <p><strong>Question:</strong> Find electronics products that cost more than 80.</p>
+      <div class="cw"><div class="ch"><span class="cl">SQL Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT product_name, unit_price
+FROM products
+WHERE category = 'Electronics' AND unit_price > 80;</code></pre><div class="explain"><h4>Explanation</h4><ol><li><code>WHERE</code> runs before sorting/grouping and keeps only matching rows.</li><li><code>AND</code> means both conditions must be true.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">3</div><div><div class="ltitle">DISTINCT</div><div class="lsub">Tutorial: unique values only</div></div></div>
+      <p><strong>Question:</strong> List unique customer countries.</p>
+      <div class="cw"><div class="ch"><span class="cl">SQL Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT DISTINCT country
+FROM customers;</code></pre><div class="explain"><h4>Explanation</h4><ol><li><code>DISTINCT</code> removes duplicates after reading rows.</li><li>Useful for filters, dropdown options, and profile summaries.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">4</div><div><div class="ltitle">ORDER BY + LIMIT</div><div class="lsub">Tutorial: sort and top-N</div></div></div>
+      <p><strong>Question:</strong> Show top 5 most expensive products.</p>
+      <div class="cw"><div class="ch"><span class="cl">SQL Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT product_name, unit_price
+FROM products
+ORDER BY unit_price DESC
+LIMIT 5;</code></pre><div class="explain"><h4>Explanation</h4><ol><li><code>DESC</code> means high to low.</li><li><code>LIMIT 5</code> keeps output concise for ranking use-cases.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">5</div><div><div class="ltitle">LIKE / IN / BETWEEN</div><div class="lsub">Tutorial: pattern/list/range filtering</div></div></div>
+      <p><strong>Question:</strong> Find products with “Keyboard” in name and customers from USA/Canada.</p>
+      <div class="cw"><div class="ch"><span class="cl">SQL Answer A (LIKE)</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT product_name, unit_price
+FROM products
+WHERE product_name LIKE '%Keyboard%';</code></pre><div class="explain"><h4>Explanation</h4><ol><li><code>%</code> matches any characters before/after the word.</li></ol></div></div>
+      <div class="cw"><div class="ch"><span class="cl">SQL Answer B (IN)</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT full_name, country
+FROM customers
+WHERE country IN ('USA','Canada');</code></pre><div class="explain"><h4>Explanation</h4><ol><li><code>IN</code> is cleaner than many OR conditions.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge lb2">6</div><div><div class="ltitle">INNER JOIN</div><div class="lsub">Tutorial: combine matching rows from two tables</div></div></div>
+      <p><strong>Question:</strong> Show each employee with department name.</p>
+      <div class="cw"><div class="ch"><span class="cl">SQL Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT e.full_name, e.salary, d.dept_name
+FROM employees e
+INNER JOIN departments d ON e.department_id = d.department_id;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>JOIN key is department id in both tables.</li><li>Rows without match are excluded in INNER JOIN.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge lb2">7</div><div><div class="ltitle">LEFT JOIN</div><div class="lsub">Tutorial: keep all left-table rows</div></div></div>
+      <p><strong>Question:</strong> Show all products and sold quantity (include unsold).</p>
+      <div class="cw"><div class="ch"><span class="cl">SQL Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT p.product_name, COALESCE(SUM(oi.quantity),0) AS units_sold
+FROM products p
+LEFT JOIN order_items oi ON p.product_id = oi.product_id
+GROUP BY p.product_id, p.product_name;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>LEFT JOIN preserves every product row.</li><li><code>COALESCE</code> turns NULL sold count into 0.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge lb2">8</div><div><div class="ltitle">GROUP BY + Aggregate</div><div class="lsub">Tutorial: summarize by group</div></div></div>
+      <p><strong>Question:</strong> Department headcount and payroll.</p>
+      <div class="cw"><div class="ch"><span class="cl">SQL Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT d.dept_name,
+       COUNT(e.employee_id) AS headcount,
+       SUM(e.salary) AS total_payroll
+FROM departments d
+LEFT JOIN employees e ON d.department_id = e.department_id
+GROUP BY d.department_id, d.dept_name;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>Each department becomes one output row.</li><li>COUNT and SUM calculate metrics over grouped rows.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge lb2">9</div><div><div class="ltitle">HAVING</div><div class="lsub">Tutorial: filter groups after aggregate</div></div></div>
+      <p><strong>Question:</strong> Show only customers with more than one order.</p>
+      <div class="cw"><div class="ch"><span class="cl">SQL Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT c.full_name, COUNT(o.order_id) AS order_count
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.full_name
+HAVING COUNT(o.order_id) > 1;</code></pre><div class="explain"><h4>Explanation</h4><ol><li><code>HAVING</code> is like WHERE for grouped rows.</li><li>Use HAVING when condition uses aggregate output.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge lb2">10</div><div><div class="ltitle">CASE WHEN</div><div class="lsub">Tutorial: conditional logic in SQL</div></div></div>
+      <p><strong>Question:</strong> Categorize salaries into bands.</p>
+      <div class="cw"><div class="ch"><span class="cl">SQL Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT full_name, salary,
+CASE
+  WHEN salary >= 100000 THEN 'Senior'
+  WHEN salary >= 75000 THEN 'Mid'
+  ELSE 'Entry'
+END AS salary_band
+FROM employees;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>Rules run from top to bottom.</li><li>First matched condition decides label.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge lb3">11</div><div><div class="ltitle">Subquery</div><div class="lsub">Tutorial: use query inside query</div></div></div>
+      <p><strong>Question:</strong> Employees above company average salary.</p>
+      <div class="cw"><div class="ch"><span class="cl">SQL Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT full_name, salary
+FROM employees
+WHERE salary > (SELECT AVG(salary) FROM employees);</code></pre><div class="explain"><h4>Explanation</h4><ol><li>Inner query returns one value: average salary.</li><li>Outer query compares each row with that value.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge lb3">12</div><div><div class="ltitle">CTE (WITH)</div><div class="lsub">Tutorial: readable multi-step query</div></div></div>
+      <p><strong>Question:</strong> Find VIP customers with total spend above 300.</p>
+      <div class="cw"><div class="ch"><span class="cl">SQL Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>WITH spend AS (
+  SELECT customer_id, SUM(total_amount) AS total_spend
+  FROM orders
+  GROUP BY customer_id
+)
+SELECT customer_id, total_spend
+FROM spend
+WHERE total_spend > 300;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>CTE creates temporary named result.</li><li>Main query reads from it like a table.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge lb3">13</div><div><div class="ltitle">Window Function (DENSE_RANK)</div><div class="lsub">Tutorial: rank rows without collapsing</div></div></div>
+      <p><strong>Question:</strong> Top 2 earners in each department.</p>
+      <div class="cw"><div class="ch"><span class="cl">SQL Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>WITH ranked AS (
+  SELECT e.full_name, e.department_id, e.salary,
+         DENSE_RANK() OVER (PARTITION BY e.department_id ORDER BY e.salary DESC) AS rnk
+  FROM employees e
+)
+SELECT *
+FROM ranked
+WHERE rnk <= 2;</code></pre><div class="explain"><h4>Explanation</h4><ol><li><code>PARTITION BY</code> resets rank per department.</li><li>Window function keeps every row and adds rank column.</li></ol></div></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge lb3">14</div><div><div class="ltitle">INSERT / UPDATE / DELETE</div><div class="lsub">Tutorial: writing data safely</div></div></div>
+      <p><strong>Question:</strong> Add one product, then preview update and delete targets safely.</p>
+      <div class="cw"><div class="ch"><span class="cl">SQL Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>INSERT INTO products (product_id, product_name, category, unit_price, stock_qty)
+VALUES (16, 'Standing Desk Pro', 'Accessories', 399.99, 30);
+
+SELECT * FROM products WHERE product_id = 16;
+
+-- Preview rows before update/delete
+SELECT COUNT(*) AS to_update FROM products WHERE category = 'Electronics';
+SELECT COUNT(*) AS to_delete FROM orders WHERE status = 'cancelled';</code></pre><div class="explain"><h4>Explanation</h4><ol><li>Always verify with SELECT/COUNT before UPDATE/DELETE.</li><li>Safe preview prevents accidental mass data changes.</li></ol></div></div>
+    </article>
+  </section>
+
+  <div class="footer-nav"><a href="Learn Sql.html">← Back Home</a><a href="playground.html">Open Playground →</a></div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script>
+<script src="assets/app.js"></script>
+<script>SqlMastery.bootPage('beginner');</script>
+</body>
+</html>
