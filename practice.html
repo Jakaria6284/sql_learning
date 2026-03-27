@@ -1,36 +1,149 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SQL Mastery — Practice</title><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/style.css"></head>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SQL Made Simple — Practice & Challenges</title><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/style.css"></head>
 <body>
-<header class="top-nav"><div class="nav-inner"><div class="brand">SQL Mastery</div><nav class="nav-links"><a href="Learn Sql.html" data-page="home">Home</a><a href="beginner.html" data-page="beginner">Beginner</a><a href="core.html" data-page="core">Core SQL</a><a href="advanced.html" data-page="advanced">Advanced</a><a href="industry.html" data-page="industry">Industry</a><a href="practice.html" data-page="practice">Practice</a></nav></div></header>
+<header class="top-nav"><div class="nav-inner"><div class="brand">SQL Made Simple</div><nav class="nav-links"><a href="index.html" data-page="home">Home</a><a href="beginner.html" data-page="beginner">Beginner</a><a href="core.html" data-page="core">Core SQL</a><a href="advanced.html" data-page="advanced">Advanced</a><a href="industry.html" data-page="industry">Industry</a><a href="practice.html" data-page="practice">Practice</a></nav></div></header>
 <main class="page">
 <section class="hero"><div class="badges"><span class="badge b5">Phase 5</span><span class="badge b2">Practice Mode</span></div><h1>Practice: <em>apply everything you learned</em></h1><p>Each challenge has a solution query and exact explanation so learners can compare approach, not only syntax.</p></section>
 <section class="runner"><div class="runner-top"><div class="runner-title">⚡ SQL Playground <span class="runner-pill" id="runner-status">DB Loading…</span></div><div class="runner-actions"><button onclick="fillStarter()">Starter</button><button onclick="toggleSchema()">Schema</button><button onclick="clearEditor()">Clear</button><button class="run-btn" onclick="runSQL()">Run (Ctrl+Enter)</button></div></div><textarea id="editor" placeholder="Solve challenge here..."></textarea><div class="helper"><span id="db-txt">Loading database…</span></div><div id="schema-panel"><div class="schema-grid" id="schema-grid"></div></div><div class="result-area" id="result"><div class="res-msg">Run a query to see results here.</div></div></section>
 
 <section class="section"><div class="section-head"><div class="section-tag">Challenges</div><div class="section-title">Easy → Medium → Hard + Quick Reference</div><div class="section-desc">Lessons 19–22 in practical exam style.</div></div>
 
-<article class="lesson"><div class="lhd"><div class="lbadge lb5">19</div><div><div class="ltitle">Easy Challenge</div><div class="lsub">Electronics list sorted by price</div></div></div>
-<div class="cw"><div class="ch"><span class="cl">Solution</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT product_name, unit_price, stock_qty
+<article class="lesson"><div class="lhd"><div class="lbadge lb5">19</div><div><div class="ltitle">Easy: Build an Electronics Inventory Report</div><div class="lsub">Select, filter, and sort your first real query</div></div></div>
+
+<div class="simple-box" style="background:#f0f7ff; border-left: 4px solid #1976d2;">
+  <strong>📋 Business Context:</strong> The inventory manager needs a quick list of all electronics in stock, sorted by price to identify which items are most and least expensive. This helps with pricing decisions and stock warnings.
+</div>
+
+<div class="simple-box">
+  <strong>🎯 Your Task:</strong><br>
+  Write a query that shows:<br>
+  • Product name<br>
+  • Unit price<br>
+  • Stock quantity<br>
+  <br>
+  Only for Electronics category, with most expensive items first.
+</div>
+
+<div class="simple-box" style="background:#fafafa; border-left: 4px solid #888;">
+  <strong>💡 Hint:</strong> Use SELECT to pick columns, WHERE to filter category, and ORDER BY DESC to sort by price highest-first.
+</div>
+
+<div class="key-idea">
+  <strong>✓ Expected result format:</strong> About 15-20 electronics rows with prices ranging $50-$500+, most expensive at top.
+</div>
+
+<div class="cw"><div class="ch"><span class="cl">Solution (Click to reveal)</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT product_name, unit_price, stock_qty
 FROM products
 WHERE category = 'Electronics'
-ORDER BY unit_price DESC;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>Filter category first using WHERE.</li><li>Sort descending to show most expensive first.</li><li>Returns exactly requested output columns.</li></ol></div></div>
+ORDER BY unit_price DESC;</code></pre>
+<div class="explain">
+  <h4>Why This Approach Works</h4>
+  <ol>
+    <li><code>WHERE category = 'Electronics'</code> — Filters to only electronics before sorting (faster than sorting all products).</li>
+    <li><code>ORDER BY unit_price DESC</code> — Descending order shows highest prices first, perfect for pricing strategy.</li>
+    <li><code>SELECT product_name, unit_price, stock_qty</code> — Exact columns needed; no wasted data.</li>
+  </ol>
+  <h4>Business Insight</h4>
+  <p>If stock_qty is low for high-price items, it's a restock priority. If stock_qty is high for low-price items, you might run a sale to move inventory.</p>
+</div>
+</div>
 </article>
 
-<article class="lesson"><div class="lhd"><div class="lbadge lb5">20</div><div><div class="ltitle">Medium Challenge</div><div class="lsub">Orders per customer (more than one)</div></div></div>
-<div class="cw"><div class="ch"><span class="cl">Solution</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT c.full_name, COUNT(o.order_id) AS order_count
+<article class="lesson"><div class="lhd"><div class="lbadge lb5">20</div><div><div class="ltitle">Medium: Find Loyal Customers</div><div class="lsub">JOIN + GROUP BY + HAVING combined</div></div></div>
+
+<div class="simple-box" style="background:#f0f7ff; border-left: 4px solid #1976d2;">
+  <strong>📋 Business Context:</strong> The customer retention team wants to identify "loyal" customers—those who've made multiple purchases. These VIPs deserve special attention, discounts, and personalized marketing.
+</div>
+
+<div class="simple-box">
+  <strong>🎯 Your Task:</strong><br>
+  Write a query that shows:<br>
+  • Customer name<br>
+  • Total number of orders they've placed<br>
+  <br>
+  Only show customers with MORE THAN ONE order, sorted by order count (highest first).
+</div>
+
+<div class="simple-box" style="background:#fafafa; border-left: 4px solid #888;">
+  <strong>💡 Hint:</strong> You need to:<br>
+  1. JOIN customers to orders (to link names with orders)<br>
+  2. GROUP BY customer to count orders per person<br>
+  3. HAVING to filter for count > 1 (not WHERE)<br>
+  4. ORDER BY count descending
+</div>
+
+<div class="key-idea">
+  <strong>✓ Expected result format:</strong> 8-12 customer names with order counts (2, 3, 4+). No one-time customers.
+</div>
+
+<div class="cw"><div class="ch"><span class="cl">Solution (Click to reveal)</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT c.full_name, COUNT(o.order_id) AS order_count
 FROM customers c
 JOIN orders o ON c.customer_id = o.customer_id
 GROUP BY c.customer_id, c.full_name
 HAVING COUNT(o.order_id) > 1
-ORDER BY order_count DESC;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>JOIN links customer names to order rows.</li><li>GROUP BY creates one row per customer.</li><li>HAVING keeps only grouped customers with order count > 1.</li></ol></div></div>
+ORDER BY order_count DESC;</code></pre>
+<div class="explain">
+  <h4>Why This Approach Works</h4>
+  <ol>
+    <li><code>JOIN customers c ... orders o</code> — Links customer names to their orders.</li>
+    <li><code>GROUP BY c.customer_id, c.full_name</code> — Bunches all orders per customer into one row.</li>
+    <li><code>HAVING COUNT(o.order_id) > 1</code> — HAVING (not WHERE) because we're filtering AFTER grouping. WHERE filters before.</li>
+    <li><code>ORDER BY order_count DESC</code> — Top customers (most orders) first.</li>
+  </ol>
+  <h4>Key Insight: WHERE vs HAVING</h4>
+  <ul>
+    <li><strong>❌ Wrong:</strong> <code>WHERE COUNT(...) > 1</code> → Doesn't work; WHERE can't use aggregates.</li>
+    <li><strong>✅ Right:</strong> <code>HAVING COUNT(...) > 1</code> → Filters groups after aggregation.</li>
+  </ul>
+  <h4>Business Insight</h4>
+  <p>These customers (2+ orders) are your retention gold mine. A 10% discount to keep them costs less than acquiring new customers.</p>
+</div>
+</div>
 </article>
 
-<article class="lesson"><div class="lhd"><div class="lbadge lb5">21</div><div><div class="ltitle">Hard Challenge</div><div class="lsub">Department budget status using CASE</div></div></div>
-<div class="cw"><div class="ch"><span class="cl">Solution</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>WITH payroll AS (
-  SELECT department_id, COUNT(*) AS headcount, SUM(salary) AS total_payroll
+<article class="lesson"><div class="lhd"><div class="lbadge lb5">21</div><div><div class="ltitle">Hard: Department Budget Analysis</div><div class="lsub">CTEs, JOINs, CASE logic, and calculations combined</div></div></div>
+
+<div class="simple-box" style="background:#f0f7ff; border-left: 4px solid #1976d2;">
+  <strong>📋 Business Context:</strong> The CFO needs to review each department's budget health. Some departments blow their budgets (overstaff, high salaries), others underspend (vacancies, low-paid staff). The finance team uses this report monthly to approve raises, hiring freeze, or reallocation.
+</div>
+
+<div class="simple-box">
+  <strong>🎯 Your Task:</strong><br>
+  Write a query that shows FOR EACH DEPARTMENT:<br>
+  • Department name<br>
+  • Employee count (headcount)<br>
+  • Total payroll (sum of salaries)<br>
+  • Budget amount (from departments table)<br>
+  • Remaining budget (budget - payroll)<br>
+  • Budget status: "OVER BUDGET" (payroll > 105% of budget), "UNDER BUDGET" (payroll < 95% of budget), or "ON TARGET"<br>
+  <br>
+  Sort by remaining budget (smallest first—the most over-budget departments appear first).
+</div>
+
+<div class="simple-box" style="background:#fafafa; border-left: 4px solid #888;">
+  <strong>💡 Hint:</strong> You need to:<br>
+  1. Calculate payroll stats per department ONCE (use WITH/CTE)<br>
+  2. JOIN that CTE to departments table<br>
+  3. Calculate remaining = budget - payroll<br>
+  4. Use CASE to categorize status (check ±5% margins)<br>
+  5. ORDER BY remaining
+</div>
+
+<div class="key-idea">
+  <strong>✓ Expected result format:</strong> 3-4 departments with budget comparisons. Some over (negative remaining), some under (large remaining).
+</div>
+
+<div class="cw"><div class="ch"><span class="cl">Solution (Click to reveal)</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>WITH payroll AS (
+  SELECT department_id, 
+         COUNT(*) AS headcount, 
+         SUM(salary) AS total_payroll
   FROM employees
   GROUP BY department_id
 )
-SELECT d.dept_name, p.headcount, p.total_payroll, d.budget,
+SELECT d.dept_name, 
+       p.headcount, 
+       p.total_payroll, 
+       d.budget,
        d.budget - p.total_payroll AS remaining,
        CASE
          WHEN p.total_payroll > d.budget * 1.05 THEN 'OVER BUDGET'
@@ -38,13 +151,178 @@ SELECT d.dept_name, p.headcount, p.total_payroll, d.budget,
          ELSE 'ON TARGET'
        END AS budget_status
 FROM departments d
-JOIN payroll p ON d.department_id = p.department_id
-ORDER BY remaining;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>CTE calculates payroll once per department.</li><li>Main query compares payroll with budget.</li><li>CASE applies ±5% rule for status labels.</li></ol></div></div>
+LEFT JOIN payroll p ON d.department_id = p.department_id
+ORDER BY remaining;</code></pre>
+<div class="explain">
+  <h4>Why This Approach Works</h4>
+  <ol>
+    <li><strong>WITH payroll AS (...):</strong> A CTE (Common Table Expression) that calculates headcount and payroll per department ONCE. Cleaner than subqueries and easier to read.</li>
+    <li><strong>LEFT JOIN payroll:</strong> LEFT JOIN keeps all departments, even if they have no employees (rare but safe).</li>
+    <li><strong>CASE logic:</strong> Applies a ±5% tolerance:
+      <ul>
+        <li>If payroll > budget × 1.05 → OVER (exceeds budget by >5%)</li>
+        <li>If payroll < budget × 0.95 → UNDER (uses <95% of budget)</li>
+        <li>Otherwise → ON TARGET (within 5%)</li>
+      </ul>
+    </li>
+    <li><strong>ORDER BY remaining:</strong> Negative remaining first = departments most over budget (finance priority).</li>
+  </ol>
+  <h4>Advanced Concept: CTE (WITH)</h4>
+  <p>A CTE is a "named temporary query" that you define once and reuse. It makes complex queries readable and prevents calculating the same thing multiple times.</p>
+  <h4>Business Insight</h4>
+  <p>If a department is OVER BUDGET by 10-15%, the CFO might freeze hiring or cap bonuses. If UNDER BUDGET, they might approve equipment purchases or raises to stay on track.</p>
+</div>
+</div>
 </article>
 
-<article class="lesson"><div class="lhd"><div class="lbadge lb5">22</div><div><div class="ltitle">Quick Reference</div><div class="lsub">Fast memory map before interviews/tests</div></div></div>
-<p><strong>SELECT</strong> read rows · <strong>WHERE</strong> filter rows · <strong>GROUP BY</strong> aggregate groups · <strong>HAVING</strong> filter groups · <strong>JOIN</strong> merge tables · <strong>CASE</strong> conditional logic · <strong>WITH</strong> named query step · <strong>LAG/RANK</strong> window analytics.</p>
-<div class="call ci">ℹ️ Best learning loop: read explanation → run query → modify one line → run again.</div>
+<article class="lesson"><div class="lhd"><div class="lbadge lb5">22</div><div><div class="ltitle">Expert: Sales Performance by Category</div><div class="lsub">Real-world analytics: JOINs, GROUP BY, aggregates, sorting</div></div></div>
+
+<div class="simple-box" style="background:#f0f7ff; border-left: 4px solid #1976d2;">
+  <strong>📋 Business Context:</strong> The sales director reviews quarterly performance by product category. They want to see which categories generate the most revenue, how many items sold, and average price point. This data drives inventory planning and marketing budget allocation.
+</div>
+
+<div class="simple-box">
+  <strong>🎯 Your Task:</strong><br>
+  Write a query that shows FOR EACH PRODUCT CATEGORY:<br>
+  • Category name<br>
+  • Total items sold (sum of order quantities)<br>
+  • Total revenue (sum of quantity × unit_price)<br>
+  • Average item price<br>
+  • Number of unique products in category<br>
+  <br>
+  Sort by total revenue highest-first.
+</div>
+
+<div class="simple-box" style="background:#fafafa; border-left: 4px solid #888;">
+  <strong>💡 Hint:</strong> You need to:<br>
+  1. JOIN products → order_items (links categories to sales)<br>
+  2. GROUP BY category<br>
+  3. SUM(quantity), SUM(quantity * price), AVG(price), COUNT(DISTINCT product_id)<br>
+  4. ORDER BY revenue DESC
+</div>
+
+<div class="key-idea">
+  <strong>✓ Expected result format:</strong> 4 categories with revenue totals, likely ranging $5K-$50K each.
+</div>
+
+<div class="cw"><div class="ch"><span class="cl">Solution (Click to reveal)</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT 
+  p.category,
+  SUM(oi.quantity) AS items_sold,
+  SUM(oi.quantity * p.unit_price) AS total_revenue,
+  ROUND(AVG(p.unit_price), 2) AS avg_price,
+  COUNT(DISTINCT p.product_id) AS num_products
+FROM products p
+JOIN order_items oi ON p.product_id = oi.product_id
+GROUP BY p.category
+ORDER BY total_revenue DESC;</code></pre>
+<div class="explain">
+  <h4>Why This Approach Works</h4>
+  <ol>
+    <li><code>SUM(oi.quantity)</code> — Total items sold across all orders in category.</li>
+    <li><code>SUM(oi.quantity * p.unit_price)</code> — Revenue per item × quantity = total revenue (not in DB, calculated on fly).</li>
+    <li><code>AVG(p.unit_price)</code> — Average price point (useful for positioning: "budget" vs "premium" category).</li>
+    <li><code>COUNT(DISTINCT p.product_id)</code> — How many unique products per category (inventory breadth).</li>
+    <li><code>ROUND(avg_price, 2)</code> — Rounds to 2 decimals for nice currency display.</li>
+  </ol>
+  <h4>Business Insight</h4>
+  <p>If Electronics generates 60% of revenue but only 20% of items sold, they're high-margin. If Furniture is 40% of items but 20% of revenue, it's low-margin and may need repricing.</p>
+</div>
+</div>
+</article>
+
+<article class="lesson"><div class="lhd"><div class="lbadge lb5">23</div><div><div class="ltitle">Challenge: Product Review Sentiment</div><div class="lsub">CASE WHEN with text categorization</div></div></div>
+
+<div class="simple-box" style="background:#f0f7ff; border-left: 4px solid #1976d2;">
+  <strong>📋 Business Context:</strong> The product team wants to categorize customer reviews by sentiment (positive, neutral, negative) based on review score. Products with too many negative reviews should be investigated (quality issues?) or discontinued.
+</div>
+
+<div class="simple-box">
+  <strong>🎯 Your Task:</strong><br>
+  Write a query that shows FOR EACH PRODUCT:<br>
+  • Product name<br>
+  • Number of reviews<br>
+  • Average review score<br>
+  • Sentiment category based on average score:<br>
+    - Score ≥ 4.5: "Excellent"<br>
+    - Score ≥ 3.5 and < 4.5: "Good"<br>
+    - Score ≥ 2.5 and < 3.5: "Average"<br>
+    - Score < 2.5: "Poor"<br>
+  <br>
+  Sort by average score descending (best-rated first).
+</div>
+
+<div class="simple-box" style="background:#fafafa; border-left: 4px solid #888;">
+  <strong>💡 Hint:</strong> You need to:<br>
+  1. JOIN products to reviews<br>
+  2. GROUP BY product_id, product_name<br>
+  3. COUNT(review_id) and AVG(review_score)<br>
+  4. Use CASE to categorize by score thresholds<br>
+  5. ORDER BY avg_score DESC
+</div>
+
+<div class="cw"><div class="ch"><span class="cl">Solution (Click to reveal)</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT 
+  p.product_name,
+  COUNT(r.review_id) AS num_reviews,
+  ROUND(AVG(r.review_score), 2) AS avg_score,
+  CASE
+    WHEN AVG(r.review_score) >= 4.5 THEN 'Excellent'
+    WHEN AVG(r.review_score) >= 3.5 THEN 'Good'
+    WHEN AVG(r.review_score) >= 2.5 THEN 'Average'
+    ELSE 'Poor'
+  END AS sentiment
+FROM products p
+LEFT JOIN reviews r ON p.product_id = r.product_id
+GROUP BY p.product_id, p.product_name
+ORDER BY avg_score DESC;</code></pre>
+<div class="explain">
+  <h4>Why This Approach Works</h4>
+  <ol>
+    <li><code>LEFT JOIN reviews</code> — LEFT JOIN keeps products even if no reviews exist (new products).</li>
+    <li><code>CASE WHEN AVG(r.review_score) >= 4.5</code> — Checks aggregated average, not individual scores.</li>
+    <li><code>ROUND(AVG(...), 2)</code> — Rounds to 2 decimals for readability.</li>
+    <li><code>ORDER BY avg_score DESC</code> — Highest-rated products first for quick identification of winners.</li>
+  </ol>
+  <h4>Why LEFT JOIN?</h4>
+  <p>If you use INNER JOIN and a product has no reviews yet, it won't show up. LEFT JOIN shows all products, and you'll see NULL / 0 for review count on new items.</p>
+  <h4>Business Insight</h4>
+  <p>Products with "Poor" sentiment need investigation: Is it a quality issue? Shipping damage? Wrong expectations? Poor reviews hurt sales, so prioritize fixes here.</p>
+</div>
+</div>
+</article>
+
+<article class="lesson"><div class="lhd"><div class="lbadge lb5">24</div><div><div class="ltitle">Quick Reference: Common Patterns</div><div class="lsub">Cheat sheet for tests and interviews</div></div></div>
+
+<div class="simple-box">
+  <strong>Output Specific Columns:</strong> <code>SELECT full_name, salary FROM employees;</code>
+</div>
+<div class="simple-box">
+  <strong>Filter Rows:</strong> <code>WHERE category = 'Electronics' AND price > 100;</code>
+</div>
+<div class="simple-box">
+  <strong>Sort Results:</strong> <code>ORDER BY salary DESC LIMIT 10;</code> (top 10 paid employees)
+</div>
+<div class="simple-box">
+  <strong>Remove Duplicates:</strong> <code>SELECT DISTINCT country FROM customers;</code>
+</div>
+<div class="simple-box">
+  <strong>Count / Sum / Average:</strong> <code>SELECT COUNT(*), SUM(salary), AVG(salary) FROM employees;</code>
+</div>
+<div class="simple-box">
+  <strong>Group and Filter:</strong> <code>GROUP BY dept HAVING COUNT(*) > 5;</code> (departments with >5 employees)
+</div>
+<div class="simple-box">
+  <strong>Link Two Tables:</strong> <code>FROM employees e JOIN departments d ON e.dept_id = d.dept_id;</code>
+</div>
+<div class="simple-box">
+  <strong>Conditional Output:</strong> <code>CASE WHEN salary > 100000 THEN 'Senior' ELSE 'Junior' END AS level;</code>
+</div>
+<div class="simple-box">
+  <strong>Temporary Query (CTE):</strong> <code>WITH high_earners AS (SELECT * FROM employees WHERE salary > 80000) SELECT * FROM high_earners;</code>
+</div>
+
+<div class="key-idea">
+  <strong>🔑 Pro Tip:</strong> When building complex queries, test them piece by piece. Start with one table (SELECT + WHERE), add JOINs next, then GROUP BY + HAVING, then ORDER BY. Don't try to write it all at once!
+</div>
 </article>
 </section>
 <div class="footer-nav"><a href="industry.html">← Previous: Industry</a><a href="Learn Sql.html">Back to Home</a></div>
