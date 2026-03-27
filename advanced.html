@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SQL Mastery — Advanced</title><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/style.css"></head>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SQL Made Simple — Advanced</title><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/style.css"></head>
 <body>
-<header class="top-nav"><div class="nav-inner"><div class="brand">SQL Mastery</div><nav class="nav-links"><a href="Learn Sql.html" data-page="home">Home</a><a href="beginner.html" data-page="beginner">Beginner</a><a href="core.html" data-page="core">Core SQL</a><a href="advanced.html" data-page="advanced">Advanced</a><a href="industry.html" data-page="industry">Industry</a><a href="practice.html" data-page="practice">Practice</a></nav></div></header>
+<header class="top-nav"><div class="nav-inner"><div class="brand">SQL Made Simple</div><nav class="nav-links"><a href="index.html" data-page="home">Home</a><a href="beginner.html" data-page="beginner">Beginner</a><a href="core.html" data-page="core">Core SQL</a><a href="advanced.html" data-page="advanced">Advanced</a><a href="industry.html" data-page="industry">Industry</a><a href="practice.html" data-page="practice">Practice</a></nav></div></header>
 <main class="page">
 <section class="hero"><div class="badges"><span class="badge b3">Phase 3</span><span class="badge b2">Advanced SQL</span></div><h1>Advanced SQL: <em>readable complex analysis</em></h1><p>This page includes CTEs, window functions, and safe DML patterns with practical explanations for each query.</p></section>
 <section class="runner"><div class="runner-top"><div class="runner-title">⚡ SQL Playground <span class="runner-pill" id="runner-status">DB Loading…</span></div><div class="runner-actions"><button onclick="fillStarter()">Starter</button><button onclick="toggleSchema()">Schema</button><button onclick="clearEditor()">Clear</button><button class="run-btn" onclick="runSQL()">Run (Ctrl+Enter)</button></div></div><textarea id="editor" placeholder="Run advanced SQL query..."></textarea><div class="helper"><span id="db-txt">Loading database…</span></div><div id="schema-panel"><div class="schema-grid" id="schema-grid"></div></div><div class="result-area" id="result"><div class="res-msg">Run a query to see results here.</div></div></section>
@@ -67,6 +67,61 @@ WHERE category = 'Electronics' AND stock_qty > 200;
 <div class="call ct">💡 Safe rule: before every UPDATE/DELETE, run the same WHERE in a SELECT COUNT(*) preview.</div>
 </article>
 </section>
+
+<section class="section">
+  <div class="section-head"><div class="section-tag">Practice Questions</div><div class="section-title">Test Your Advanced Skills</div><div class="section-desc">Apply CTEs, window functions, and safe DML patterns.</div></div>
+
+  <article class="lesson">
+    <div class="lhd"><div class="lbadge">Q1</div><div><div class="ltitle">Customer Lifetime Value (CLV) with CTE</div><div class="lsub">Multi-step analysis with WITH</div></div></div>
+    <div class="simple-box" style="background:#f0f7ff;">
+      <strong>Challenge:</strong> Calculate each customer's total spend and order count. Show only customers with 3+ orders and spend over $500. Sort by spend (highest first).
+    </div>
+    <div class="simple-box" style="background:#f5f5f5;">
+      <strong>Hint:</strong> Use CTE to calculate spend and order count per customer, then filter with WHERE in main query.
+    </div>
+    <div class="cw"><div class="ch"><span class="cl">Show Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>WITH customer_metrics AS (
+  SELECT 
+    customer_id,
+    COUNT(order_id) AS order_count,
+    SUM(total_amount) AS total_spend
+  FROM orders
+  GROUP BY customer_id
+)
+SELECT 
+  c.full_name,
+  cm.order_count,
+  cm.total_spend
+FROM customer_metrics cm
+JOIN customers c ON cm.customer_id = c.customer_id
+WHERE cm.order_count >= 3 AND cm.total_spend > 500
+ORDER BY cm.total_spend DESC;</code></pre></div>
+  </article>
+
+  <article class="lesson">
+    <div class="lhd"><div class="lbadge">Q2</div><div><div class="ltitle">Rank Employees by Department</div><div class="lsub">Window function with RANK() and PARTITION BY</div></div></div>
+    <div class="simple-box" style="background:#f0f7ff;">
+      <strong>Challenge:</strong> For each department, rank employees by salary from highest to lowest. Show department, employee name, salary, and rank. Filter to show only the top 2 earners per department.
+    </div>
+    <div class="simple-box" style="background:#f5f5f5;">
+      <strong>Hint:</strong> Use DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC). Wrap in CTE and filter WHERE rank <= 2.
+    </div>
+    <div class="cw"><div class="ch"><span class="cl">Show Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>WITH ranked_employees AS (
+  SELECT 
+    d.dept_name,
+    e.full_name,
+    e.salary,
+    DENSE_RANK() OVER (PARTITION BY d.department_id ORDER BY e.salary DESC) AS salary_rank
+  FROM employees e
+  JOIN departments d ON e.department_id = d.department_id
+)
+SELECT dept_name, full_name, salary, salary_rank
+FROM ranked_employees
+WHERE salary_rank <= 2
+ORDER BY dept_name, salary_rank;</code></pre></div>
+  </article>
+
+</section>
+
 <div class="footer-nav"><a href="core.html">← Previous: Core SQL</a><a href="industry.html">Next: Industry →</a></div>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script><script src="assets/app.js"></script><script>SqlMastery.bootPage('advanced');</script>

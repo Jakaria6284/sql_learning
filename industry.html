@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SQL Mastery — Industry Patterns</title>
+<title>SQL Made Simple — Industry Patterns</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-<header class="top-nav"><div class="nav-inner"><div class="brand">SQL Mastery</div><nav class="nav-links"><a href="Learn Sql.html" data-page="home">Home</a><a href="beginner.html" data-page="beginner">Beginner</a><a href="core.html" data-page="core">Core SQL</a><a href="advanced.html" data-page="advanced">Advanced</a><a href="industry.html" data-page="industry">Industry</a><a href="practice.html" data-page="practice">Practice</a></nav></div></header>
+<header class="top-nav"><div class="nav-inner"><div class="brand">SQL Made Simple</div><nav class="nav-links"><a href="index.html" data-page="home">Home</a><a href="beginner.html" data-page="beginner">Beginner</a><a href="core.html" data-page="core">Core SQL</a><a href="advanced.html" data-page="advanced">Advanced</a><a href="industry.html" data-page="industry">Industry</a><a href="practice.html" data-page="practice">Practice</a></nav></div></header>
 <main class="page">
   <section class="hero"><div class="badges"><span class="badge b4">Phase 4</span><span class="badge b3">Production Queries</span></div><h1>Industry Patterns: <em>real business analytics</em></h1><p>These are practical SQL patterns used in product, marketing, CRM and finance teams.</p></section>
   <section class="runner"><div class="runner-top"><div class="runner-title">⚡ SQL Playground <span class="runner-pill" id="runner-status">DB Loading…</span></div><div class="runner-actions"><button onclick="fillStarter()">Starter</button><button onclick="toggleSchema()">Schema</button><button onclick="clearEditor()">Clear</button><button class="run-btn" onclick="runSQL()">Run (Ctrl+Enter)</button></div></div><textarea id="editor" placeholder="Run an industry query..."></textarea><div class="helper"><span id="db-txt">Loading database…</span></div><div id="schema-panel"><div class="schema-grid" id="schema-grid"></div></div><div class="result-area" id="result"><div class="res-msg">Run a query to see results here.</div></div></section>
@@ -94,6 +94,62 @@ SELECT customer_id, lifetime_value, days_inactive,
 FROM metrics
 ORDER BY lifetime_value DESC;</code></pre><div class="explain"><h4>Explanation</h4><ol><li>Calculate each customer’s total value and last activity date.</li><li>Compute inactivity days relative to reference date.</li><li>CASE labels customer into operational churn buckets.</li></ol></div></div>
     </article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div class="section-tag">Practice Questions</div><div class="section-title">Test Your Industry SQL Skills</div><div class="section-desc">Apply real-world analysis patterns.</div></div>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">Q1</div><div><div class="ltitle">Funnel Analysis: Order Status Breakdown</div><div class="lsub">See conversion at each stage</div></div></div>
+      <div class="simple-box" style="background:#f0f7ff;">
+        <strong>Challenge:</strong> Analyze the order pipeline:• Count of orders per status• Percentage of total orders for each status• Sort by count (highest first)
+      </div>
+      <div class="simple-box" style="background:#f5f5f5;">
+        <strong>Hint:</strong> GROUP BY status, COUNT orders, use SUM(COUNT(*)) OVER () to get total for percentage calculation.
+      </div>
+      <div class="cw"><div class="ch"><span class="cl">Show Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT 
+  status,
+  COUNT(order_id) AS order_count,
+  ROUND(COUNT(order_id) * 100.0 / SUM(COUNT(order_id)) OVER (), 1) AS percentage
+FROM orders
+GROUP BY status
+ORDER BY order_count DESC;</code></pre></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">Q2</div><div><div class="ltitle">Customer Churn Health Score</div><div class="lsub">Segment customers by inactive days</div></div></div>
+      <div class="simple-box" style="background:#f0f7ff;">
+        <strong>Challenge:</strong> For each customer, calculate:• Total spending (lifetime value)• Days since last order (using reference date 2023-12-01)• Churn status: "Active" (<=30 days), "At Risk" (31-60 days), or "Churned" (>60 days)
+Show top 10 customers by lifetime value.
+      </div>
+      <div class="simple-box" style="background:#f5f5f5;">
+        <strong>Hint:</strong> Use CTE to calculate max(order_date), compare to reference. CASE for status. Limit output.
+      </div>
+      <div class="cw"><div class="ch"><span class="cl">Show Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>WITH customer_metrics AS (
+  SELECT 
+    c.full_name,
+    SUM(o.total_amount) AS lifetime_value,
+    MAX(o.order_date) AS last_order_date,
+    CAST(JULIANDAY('2023-12-01') - JULIANDAY(MAX(o.order_date)) AS INTEGER) AS days_inactive
+  FROM customers c
+  LEFT JOIN orders o ON c.customer_id = o.customer_id
+  WHERE o.status IS NULL OR o.status != 'cancelled'
+  GROUP BY c.customer_id, c.full_name
+)
+SELECT 
+  full_name,
+  ROUND(lifetime_value, 2) AS lifetime_value,
+  days_inactive,
+  CASE
+    WHEN days_inactive <= 30 THEN 'Active'
+    WHEN days_inactive <= 60 THEN 'At Risk'
+    ELSE 'Churned'
+  END AS churn_status
+FROM customer_metrics
+ORDER BY lifetime_value DESC
+LIMIT 10;</code></pre></div>
+    </article>
+
   </section>
 
   <div class="footer-nav"><a href="advanced.html">← Previous: Advanced</a><a href="practice.html">Next: Practice →</a></div>

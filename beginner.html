@@ -321,7 +321,54 @@ INNER JOIN departments d ON e.department_id = d.department_id;</code></pre>
   </section>
 
   <section class="section">
-    <div class="section-head"><div class="section-tag">Next Steps</div><div class="section-title">You're Ready for Core SQL</div><div class="section-desc">Now learn JOINs, Subqueries, Window Functions.</div></div>
+    <div class="section-head"><div class="section-tag">Practice Questions</div><div class="section-title">Test Your Beginner Skills</div><div class="section-desc">Solve these hands-on challenges before moving to Core SQL.</div></div>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">Q1</div><div><div class="ltitle">Find Expensive Products</div><div class="lsub">Use WHERE to filter by price</div></div></div>
+      <div class="simple-box" style="background:#f0f7ff;">
+        <strong>Challenge:</strong> List all products over $100, showing name and price. Sort by price (most expensive first).
+      </div>
+      <div class="simple-box" style="background:#f5f5f5;">
+        <strong>Hint:</strong> Use WHERE price > 100 and ORDER BY price DESC.
+      </div>
+      <div class="cw"><div class="ch"><span class="cl">Show Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT product_name, unit_price
+FROM products
+WHERE unit_price > 100
+ORDER BY unit_price DESC;</code></pre></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">Q2</div><div><div class="ltitle">Category Inventory Count</div><div class="lsub">GROUP BY with COUNT aggregation</div></div></div>
+      <div class="simple-box" style="background:#f0f7ff;">
+        <strong>Challenge:</strong> For each product category, show how many products exist and total stock. Sort by total stock (highest first).
+      </div>
+      <div class="simple-box" style="background:#f5f5f5;">
+        <strong>Hint:</strong> GROUP BY category, COUNT products, SUM stock_qty. ORDER BY total_stock DESC.
+      </div>
+      <div class="cw"><div class="ch"><span class="cl">Show Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT 
+  category,
+  COUNT(product_id) AS num_products,
+  SUM(stock_qty) AS total_stock
+FROM products
+GROUP BY category
+ORDER BY total_stock DESC;</code></pre></div>
+    </article>
+
+    <article class="lesson">
+      <div class="lhd"><div class="lbadge">Q3</div><div><div class="ltitle">Fix the NULL Bug</div><div class="lsub">Test your WHERE conditions</div></div></div>
+      <div class="simple-box" style="background:#f0f7ff;">
+        <strong>Challenge:</strong> Find employees who don't have a manager (no manager_id). Show their name and job title.
+      </div>
+      <div class="simple-box" style="background:#f5f5f5;">
+        <strong>Hint:</strong> Remember: manager_id = NULL doesn't work. Use IS NULL instead.
+      </div>
+      <div class="cw"><div class="ch"><span class="cl">Show Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT full_name, job_title
+FROM employees
+WHERE manager_id IS NULL;</code></pre></div>
+    </article>
+  </section>
+
+  <section class="section"><div class="section-head"><div class="section-tag">Next Steps</div><div class="section-title">You're Ready for Core SQL</div><div class="section-desc">Now learn JOINs, Subqueries, Window Functions.</div></div>
     <article class="lesson">
       <p>Congratulations! You've mastered the beginner fundamentals:</p>
       <ul style="list-style:none; padding:0;">

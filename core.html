@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SQL Mastery — Core SQL</title><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/style.css"></head>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SQL Made Simple — Core SQL</title><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/style.css"></head>
 <body>
-<header class="top-nav"><div class="nav-inner"><div class="brand">SQL Mastery</div><nav class="nav-links"><a href="Learn Sql.html" data-page="home">Home</a><a href="beginner.html" data-page="beginner">Beginner</a><a href="core.html" data-page="core">Core SQL</a><a href="advanced.html" data-page="advanced">Advanced</a><a href="industry.html" data-page="industry">Industry</a><a href="practice.html" data-page="practice">Practice</a></nav></div></header>
+<header class="top-nav"><div class="nav-inner"><div class="brand">SQL Made Simple</div><nav class="nav-links"><a href="index.html" data-page="home">Home</a><a href="beginner.html" data-page="beginner">Beginner</a><a href="core.html" data-page="core">Core SQL</a><a href="advanced.html" data-page="advanced">Advanced</a><a href="industry.html" data-page="industry">Industry</a><a href="practice.html" data-page="practice">Practice</a></nav></div></header>
 <main class="page">
 <section class="hero"><div class="badges"><span class="badge b2">Phase 2</span><span class="badge b3">Production Core</span></div><h1>Core SQL: <em>combine and summarize data</em></h1><p>This phase covers the most used SQL in real jobs: JOINs, aggregation, group filtering, CASE logic, and subqueries.</p></section>
 <section class="runner"><div class="runner-top"><div class="runner-title">⚡ SQL Playground <span class="runner-pill" id="runner-status">DB Loading…</span></div><div class="runner-actions"><button onclick="fillStarter()">Starter</button><button onclick="toggleSchema()">Schema</button><button onclick="clearEditor()">Clear</button><button class="run-btn" onclick="runSQL()">Run (Ctrl+Enter)</button></div></div><textarea id="editor" placeholder="Run core SQL query..."></textarea><div class="helper"><span id="db-txt">Loading database…</span></div><div id="schema-panel"><div class="schema-grid" id="schema-grid"></div></div><div class="result-area" id="result"><div class="res-msg">Run a query to see results here.</div></div></section>
@@ -59,7 +59,48 @@ ORDER BY salary DESC;</code></pre><div class="explain"><h4>Explanation</h4><ol><
 </article>
 
 </section>
-<div class="footer-nav"><a href="foundations.html">← Previous: Foundations</a><a href="advanced.html">Next: Advanced →</a></div>
+
+<section class="section">
+  <div class="section-head"><div class="section-tag">Practice Questions</div><div class="section-title">Test Your Core SQL Skills</div><div class="section-desc">Solve these challenges before moving to Advanced SQL.</div></div>
+
+  <article class="lesson">
+    <div class="lhd"><div class="lbadge">Q1</div><div><div class="ltitle">Multi-Table Revenue Report</div><div class="lsub">JOINs with aggregation</div></div></div>
+    <div class="simple-box" style="background:#f0f7ff;">
+      <strong>Challenge:</strong> Show each product category with total revenue (sum of quantity × price) from all orders. Sort by revenue (highest first).
+    </div>
+    <div class="simple-box" style="background:#f5f5f5;">
+      <strong>Hint:</strong> JOIN products → order_items, GROUP BY category, SUM(quantity * price), ORDER BY revenue DESC.
+    </div>
+    <div class="cw"><div class="ch"><span class="cl">Show Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT 
+  p.category,
+  SUM(oi.quantity * p.unit_price) AS total_revenue
+FROM products p
+JOIN order_items oi ON p.product_id = oi.product_id
+GROUP BY p.category
+ORDER BY total_revenue DESC;</code></pre></div>
+  </article>
+
+  <article class="lesson">
+    <div class="lhd"><div class="lbadge">Q2</div><div><div class="ltitle">Filter Groups with HAVING</div><div class="lsub">Departments with high average salary</div></div></div>
+    <div class="simple-box" style="background:#f0f7ff;">
+      <strong>Challenge:</strong> Find departments where the average employee salary is above $70,000. Show department name and average salary.
+    </div>
+    <div class="simple-box" style="background:#f5f5f5;">
+      <strong>Hint:</strong> GROUP BY department, use HAVING AVG(salary) > 70000, no WHERE needed here.
+    </div>
+    <div class="cw"><div class="ch"><span class="cl">Show Answer</span><button class="try-btn" onclick="trySQL(this)">▶ Try it</button><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>SELECT 
+  d.dept_name,
+  ROUND(AVG(e.salary), 2) AS avg_salary
+FROM departments d
+LEFT JOIN employees e ON d.department_id = e.department_id
+GROUP BY d.department_id, d.dept_name
+HAVING AVG(e.salary) > 70000
+ORDER BY avg_salary DESC;</code></pre></div>
+  </article>
+
+</section>
+
+<div class="footer-nav"><a href="beginner.html">← Previous: Beginner</a><a href="advanced.html">Next: Advanced →</a></div>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script><script src="assets/app.js"></script><script>SqlMastery.bootPage('core');</script>
 </body></html>
